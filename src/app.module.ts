@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeORMError } from 'typeorm';
 import { UserModule } from './user/user.module';
 import { JwtModule } from '@nestjs/jwt';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -19,6 +20,7 @@ import { JwtModule } from '@nestjs/jwt';
       logging: true,
     }),
     UserModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
