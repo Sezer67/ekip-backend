@@ -77,18 +77,16 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     const token = await this.jwtService.signAsync(
-      { username: user.username , id:user.id },
+      { username: user.username, id: user.id },
       { subject: user.id, expiresIn: '1h', secret: this.JWT_SECRET },
     );
     response.cookie('token', token, { httpOnly: true });
     delete user.password;
-    console.log("token : ",token);
+    console.log('token : ', token);
     return { ...user, token };
   }
 
-  async getCurrentUser(
-    request: Request,
-  ): Promise<ResponseLoginUserDto> {
+  async getCurrentUser(request: Request): Promise<ResponseLoginUserDto> {
     try {
       const token = request.cookies['token'];
       const data = await this.jwtService.verifyAsync(token, {

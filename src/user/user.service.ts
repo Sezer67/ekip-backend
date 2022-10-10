@@ -7,6 +7,7 @@ import * as bcrypt from 'bcryptjs';
 import { LoginUserDto, ResponseLoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
+import { UpdateUserDto } from './dto/update-user-dto';
 @Injectable()
 export class UserService {
   private readonly JWT_SECRET = process.env.JWT_SECRET;
@@ -64,4 +65,24 @@ export class UserService {
     return user;
   }
 
+  async update(id: string, dto: UpdateUserDto): Promise<ResponseCreateUserDto> {
+    console.log(id);
+    const user = await this.getUserById(id);
+    console.log('user : ', user);
+    if (dto.password) {
+      console.log('if');
+      const hash = await bcrypt.hash(dto.password, this.round);
+      dto.password = hash;
+    }
+
+    Object.keys(dto).forEach((key) => {
+      console.log('for');
+      user[key] = dto[key];
+      console.log(dto[key]);
+    });
+    await this.userRepo.save(user);
+    delete user.password;
+
+    return user;
+  }
 }
