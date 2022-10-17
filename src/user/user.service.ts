@@ -4,9 +4,8 @@ import { Repository } from 'typeorm';
 import { CreateUserDto, ResponseCreateUserDto } from './dto/create-user.dto';
 import { User } from './user.entity';
 import * as bcrypt from 'bcryptjs';
-import { LoginUserDto, ResponseLoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
-import { Request, Response } from 'express';
+import { UpdateUserDto } from './dto/update-user-dto';
 @Injectable()
 export class UserService {
   private readonly JWT_SECRET = process.env.JWT_SECRET;
@@ -64,73 +63,22 @@ export class UserService {
     return user;
   }
 
-  async login(
-    dto: LoginUserDto,
-    response: Response,
-  ): Promise<ResponseLoginUserDto> {
-    const { username, email } = dto;
-    if (!username && !email)
-      this.createResponse(
-        'error',
-        'Username veya Email adresinizi girmelisiniz.',
-        HttpStatus.BAD_REQUEST,
-      );
-    const user = await this.getByUsernameAndEmail(
-      username ? username : '',
-      email ? email : '',
-    );
-    if (!user)
-      this.createResponse(
-        'error',
-        'Böyle bir kullanıcı adı veya email mevcut değil',
-        HttpStatus.BAD_REQUEST,
-      );
+  async update(id: string, dto: UpdateUserDto): Promise<ResponseCreateUserDto> {
+    console.log(id);
+    const user = await this.getUserById(id);
+    console.log('user : ', user);
+    if (dto.password) {
+      console.log('if');
+      const hash = await bcrypt.hash(dto.password, this.round);
+      dto.password = hash;
+    }
 
-    const passwordCheck = await bcrypt.compare(dto.password, user.password);
-    if (!passwordCheck)
-      this.createResponse(
-        'error',
-        'Yanlış Şifre Girdiniz',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    const token = await this.jwtService.signAsync(
-      { username: user.username },
-      { subject: user.id, expiresIn: '1h', secret: this.JWT_SECRET },
-    );
-    response.cookie('token', token, { httpOnly: true });
+    Object.keys(dto).forEach((key) => {
+      user[key] = dto[key];
+    });
+    await this.userRepo.save(user);
     delete user.password;
 
-    return { ...user, token };
-  }
-
-  async getCurrentUser(
-    request: Request,
-  ): Promise<ResponseLoginUserDto> {
-    try {
-      const token = request.cookies['token'];
-      const data = await this.jwtService.verifyAsync(token, {
-        secret: this.JWT_SECRET,
-      });
-
-      const user = await this.getUserById(data['id']);
-      delete user.password;
-
-      return { ...user, token };
-    } catch (error) {
-      this.createResponse(
-        'error',
-        'Kayıtlı giriş yok',
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-  }
-
-  async logout(response: Response) {
-    response.clearCookie('token');
-
-    return {
-      message: 'success',
-    };
+    return user;
   }
 }
