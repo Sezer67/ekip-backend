@@ -7,7 +7,9 @@ import {
   Post,
   Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import {
   LoginUserDto,
@@ -30,6 +32,7 @@ export class AuthController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard('user-jwt'))
   async getUser(@Req() request: Request): Promise<ResponseLoginUserDto> {
     return this.authService.getCurrentUser(request);
   }

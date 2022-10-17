@@ -9,6 +9,7 @@ import { User } from 'src/user/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Request, Response } from 'express';
+import { UserAuthPayload } from './user.payload';
 
 @Injectable()
 export class AuthService {
@@ -76,27 +77,28 @@ export class AuthService {
         'Yanlış Şifre Girdiniz',
         HttpStatus.BAD_REQUEST,
       );
+    const payload: UserAuthPayload = { id: user.id };
     const token = await this.jwtService.signAsync(
-      { username: user.username, id: user.id },
+      { username: user.username, id: payload.id, role: user.role },
       { subject: user.id, expiresIn: '1h', secret: this.JWT_SECRET },
     );
     response.cookie('token', token, { httpOnly: true });
     delete user.password;
-    console.log('token : ', token);
     return { ...user, token };
   }
 
   async getCurrentUser(request: Request): Promise<ResponseLoginUserDto> {
     try {
+      // console.log('istek geldi', request);
+      const { user } = request;
+      console.log('geldi', (request.user as any).id);
       const token = request.cookies['token'];
-      const data = await this.jwtService.verifyAsync(token, {
-        secret: this.JWT_SECRET,
-      });
-
-      const user = await this.getUserById(data['id']);
-      delete user.password;
-
-      return { ...user, token };
+      // const data = await this.jwtService.verifyAsync(token, {
+      //   secret: this.JWT_SECRET,
+      // });
+      // const user = await this.getUserById(data['sub']);
+      delete (user as User).password;
+      return { ...(user as User) };
     } catch (error) {
       this.createResponse(
         'error',

@@ -1,5 +1,7 @@
 import { Role } from 'src/enums/role.enum';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Product } from 'src/product/product.entity';
+import { Sales } from 'src/sales/sales.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -26,4 +28,13 @@ export class User {
 
   @Column()
   password: string;
+
+  @OneToMany(() => Product, (product) => product.ownerId)
+  products: Product[];
+
+  @OneToMany(() => Sales, (sales) => sales.ownerId)
+  solds: Sales[];
+
+  @OneToMany(() => Sales, (sales) => sales.customerId)
+  purchaseds: Sales[];
 }

@@ -4,9 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateUserDto, ResponseCreateUserDto } from './dto/create-user.dto';
 import { User } from './user.entity';
 import * as bcrypt from 'bcryptjs';
-import { LoginUserDto, ResponseLoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
-import { Request, Response } from 'express';
 import { UpdateUserDto } from './dto/update-user-dto';
 @Injectable()
 export class UserService {
@@ -76,9 +74,7 @@ export class UserService {
     }
 
     Object.keys(dto).forEach((key) => {
-      console.log('for');
       user[key] = dto[key];
-      console.log(dto[key]);
     });
     await this.userRepo.save(user);
     delete user.password;
