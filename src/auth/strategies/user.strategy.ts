@@ -20,10 +20,10 @@ export class UserStrategy extends PassportStrategy(Strategy, 'user-jwt') {
 
   async validate(payload: UserAuthPayload): Promise<User> {
     const user = await this.userService.getUserById(payload.id);
-    console.log(payload.id);
     if (!isDefined(user)) {
       throw new UnauthorizedException();
     }
+    delete user.password;
     return user;
   }
 }

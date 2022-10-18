@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
 import { SalesModule } from './sales/sales.module';
+import { OrderModule } from './order/order.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -27,6 +28,7 @@ import { SalesModule } from './sales/sales.module';
     ProductModule,
     CategoryModule,
     SalesModule,
+    OrderModule,
   ],
   controllers: [],
   providers: [],

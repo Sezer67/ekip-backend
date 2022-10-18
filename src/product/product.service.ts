@@ -157,6 +157,7 @@ export class ProductService {
           firstName: true,
           lastName: true,
         };
+        where.stock = MoreThanOrEqual(1);
         relations.ownerId = true;
         queryReq.relations = relations;
         queryReq.select = select;

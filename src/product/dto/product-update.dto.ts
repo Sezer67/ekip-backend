@@ -11,24 +11,24 @@ export class ProductUpdateDto {
   @IsOptional()
   @IsNotEmpty()
   @IsNumber()
-  price: number;
+  price?: number;
 
   @IsOptional()
   @IsNotEmpty()
   @IsNumber()
-  showCount: number;
+  showCount?: number;
 
   @IsOptional()
   @IsNotEmpty()
   @IsNumber()
-  stock: number;
+  stock?: number;
 
   @IsOptional()
   @IsArray()
-  images: string[];
+  images?: string[];
 
   @IsOptional()
   @IsNotEmpty()
   @IsArray()
-  categories: string[];
+  categories?: string[];
 }

@@ -29,6 +29,9 @@ export class User {
   @Column()
   password: string;
 
+  @Column({ type: 'float', name: 'balance', default: 0 })
+  balance: number;
+
   @OneToMany(() => Product, (product) => product.ownerId)
   products: Product[];
 
