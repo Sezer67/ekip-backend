@@ -7,16 +7,17 @@ import { Role } from 'src/enums/role.enum';
 import { SalesService } from './sales.service';
 
 @UseGuards(AuthGuard('user-jwt'), RolesGuard)
+@Roles(Role.Admin)
 @Controller('sale')
 export class SalesController {
   constructor(private readonly salesServie: SalesService) {}
 
-  @Roles(Role.Admin)
   @Get('/all')
   getAllSales() {
     return this.salesServie.getAllSales();
   }
 
+  @Roles(Role.Customer)
   @Get('@me')
   getSalesByUser(@Req() request: Request) {
     return this.salesServie.getSalesByUser(request);

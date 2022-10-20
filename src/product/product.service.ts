@@ -236,6 +236,9 @@ export class ProductService {
       const product = await this.productRepo.findOne({
         where: { id },
       });
+      if (dto.showCount) {
+        dto.showCount = product.showCount + 1;
+      }
       Object.keys(dto).forEach((key) => {
         product[key] = dto[key];
       });

@@ -64,15 +64,14 @@ export class UserService {
   }
 
   async update(id: string, dto: UpdateUserDto): Promise<ResponseCreateUserDto> {
-    console.log(id);
     const user = await this.getUserById(id);
-    console.log('user : ', user);
     if (dto.password) {
-      console.log('if');
       const hash = await bcrypt.hash(dto.password, this.round);
       dto.password = hash;
     }
-
+    if (dto.balance) {
+      dto.balance = user.balance + dto.balance;
+    }
     Object.keys(dto).forEach((key) => {
       user[key] = dto[key];
     });

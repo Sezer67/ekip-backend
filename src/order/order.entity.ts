@@ -34,6 +34,9 @@ export class Order extends BaseEntity {
   @Column({ type: 'smallint', name: 'piece', nullable: false })
   piece: number;
 
+  @Column({ type: 'float', name: 'total_price', default: 0 })
+  totalPrice: number;
+
   @ManyToOne(() => User, (user) => user.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'customer_id' })
   customerId: User;
