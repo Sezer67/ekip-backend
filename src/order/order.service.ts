@@ -82,7 +82,7 @@ export class OrderService {
         stock: product.stock - dto.piece,
       });
       await this.userService.update((request.user as User).id, {
-        balance: (request.user as User).balance - dto.piece * product.price,
+        balance: dto.piece * product.price * -1,
       });
       const order = await this.orderRepo.save(data);
       return order;
@@ -203,6 +203,7 @@ export class OrderService {
         .where('order.owner_id = :id', {
           id: (request.user as User).id,
         })
+        .andWhere('order.is_answer = TRUE')
         .select("DATE_TRUNC('month', order.answer_at)", 'month')
         .addSelect('SUM(order.total_price)', 'taking')
         .groupBy("DATE_TRUNC('month', order.answer_at)")

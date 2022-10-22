@@ -1,4 +1,5 @@
 import { CategoryEntity } from 'src/category/category.entity';
+import { Favorite } from 'src/favorite/favorite.entity';
 import { Sales } from 'src/sales/sales.entity';
 import { User } from 'src/user/user.entity';
 import {
@@ -20,14 +21,6 @@ export class Product extends BaseEntity {
 
   @Column({ type: 'varchar', nullable: false, unique: false })
   name: string;
-
-  @Column({
-    type: 'boolean',
-    name: 'is_saled',
-    nullable: false,
-    default: false,
-  })
-  isSaled: boolean;
 
   @Column({ type: 'float', name: 'price', nullable: false })
   price: number;

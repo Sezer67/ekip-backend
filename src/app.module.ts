@@ -9,6 +9,8 @@ import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
 import { SalesModule } from './sales/sales.module';
 import { OrderModule } from './order/order.module';
+import { FavoriteModule } from './favorite/favorite.module';
+import { FollowModule } from './follow/follow.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -29,6 +31,8 @@ import { OrderModule } from './order/order.module';
     CategoryModule,
     SalesModule,
     OrderModule,
+    FavoriteModule,
+    FollowModule,
   ],
   controllers: [],
   providers: [],
