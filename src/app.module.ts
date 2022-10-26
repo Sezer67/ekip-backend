@@ -11,6 +11,8 @@ import { SalesModule } from './sales/sales.module';
 import { OrderModule } from './order/order.module';
 import { FavoriteModule } from './favorite/favorite.module';
 import { FollowModule } from './follow/follow.module';
+import { ChatModule } from './chat-room/chat.module';
+import { MessageModule } from './message/message.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -33,6 +35,8 @@ import { FollowModule } from './follow/follow.module';
     OrderModule,
     FavoriteModule,
     FollowModule,
+    ChatModule,
+    MessageModule,
   ],
   controllers: [],
   providers: [],

@@ -63,6 +63,7 @@ export class FollowService {
             firstName: true,
             lastName: true,
             email: true,
+            profilePicture: true,
           },
         },
       });
@@ -87,6 +88,7 @@ export class FollowService {
             firstName: true,
             lastName: true,
             email: true,
+            profilePicture: true,
           },
         },
       });
