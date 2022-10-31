@@ -48,7 +48,7 @@ export class FavoriteService {
 
       return await this.favoriteRepo.save(favorite);
     } catch (error) {
-      throw new BadRequestException();
+      throw new BadRequestException(error);
     }
   }
 

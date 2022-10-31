@@ -1,10 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Request } from 'express';
+import { Product } from 'src/product/product.entity';
 import { ProductService } from 'src/product/product.service';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
-import { Between, MoreThan, Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { SalesResponseType } from './dto/response-order.dto';
 import { Order } from './order.entity';
@@ -151,6 +152,7 @@ export class OrderService {
         createdAt: 'DESC',
       },
     });
+
     return orders;
   }
 
@@ -196,7 +198,7 @@ export class OrderService {
     } catch (error) {}
   }
 
-  async getSellerSaledProductsYear(request: Request): Promise<any[]> {
+  async getSellerSaledProductsYear(request: Request): Promise<Order[]> {
     try {
       const sorgu = await this.orderRepo
         .createQueryBuilder('order')
@@ -211,6 +213,30 @@ export class OrderService {
       return sorgu;
     } catch (error) {
       throw new HttpException(error, 400);
+    }
+  }
+
+  async getBestStats(
+    request: Request,
+  ): Promise<{ product: Product; count: number }> {
+    try {
+      // en çok sipariş edilen ürünüm
+      const { count, ...product } = await this.orderRepo
+        .createQueryBuilder('order')
+        .select(['order.product_id', 'product.*'])
+        .addSelect('COUNT(order.product_id)')
+        .leftJoin(Product, 'product', 'order.product_id = product.id')
+        .where('order.owner_id = :id and order.is_accept = TRUE', {
+          id: (request.user as User).id,
+        })
+        .groupBy('order.product_id')
+        .addGroupBy('product.id')
+        .orderBy('order.product_id')
+        .getRawOne();
+
+      return { product, count };
+    } catch (error) {
+      console.log(error);
     }
   }
 

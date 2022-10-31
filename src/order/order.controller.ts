@@ -49,11 +49,18 @@ export class OrderController {
   getSellerSaledProducts(@Req() request: Request) {
     return this.orderService.getSellerSaledProducts(request);
   }
+
   @UseGuards(RolesGuard)
   @Roles(Role.Seller)
   @Get('@me/sales/year')
   getSellerSaledProductsYear(@Req() request: Request) {
     return this.orderService.getSellerSaledProductsYear(request);
+  }
+  @UseGuards(RolesGuard)
+  @Roles(Role.Seller)
+  @Get('@me/sales/stat')
+  getBestStatistics(@Req() request: Request) {
+    return this.orderService.getBestStats(request);
   }
   @UseGuards(RolesGuard)
   @Roles(Role.Seller)

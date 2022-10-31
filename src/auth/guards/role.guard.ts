@@ -16,6 +16,7 @@ export class RolesGuard implements CanActivate {
 
     if (!requireRoles) return true;
     const { user } = context.switchToHttp().getRequest();
+
     delete user.profilePicture;
 
     return requireRoles.some((role) => user.role.includes(role));

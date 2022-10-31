@@ -13,6 +13,7 @@ import { FavoriteModule } from './favorite/favorite.module';
 import { FollowModule } from './follow/follow.module';
 import { ChatModule } from './chat-room/chat.module';
 import { MessageModule } from './message/message.module';
+import { IdeaModule } from './idea/idea.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -37,6 +38,7 @@ import { MessageModule } from './message/message.module';
     FollowModule,
     ChatModule,
     MessageModule,
+    IdeaModule,
   ],
   controllers: [],
   providers: [],

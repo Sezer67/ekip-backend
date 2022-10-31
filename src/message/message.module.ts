@@ -7,12 +7,19 @@ import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { MessageController } from './message.controller';
 import { Message } from './message.entity';
+import { MessageGateway } from './message.gateway';
 import { MessageService } from './message.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Message, Chat, User])],
   controllers: [MessageController],
-  providers: [MessageService, ChatService, UserService, JwtService],
+  providers: [
+    MessageService,
+    ChatService,
+    UserService,
+    JwtService,
+    MessageGateway,
+  ],
   exports: [],
 })
 export class MessageModule {}

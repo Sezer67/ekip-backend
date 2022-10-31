@@ -1,11 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { CreateUserDto, ResponseCreateUserDto } from './dto/create-user.dto';
 import { User } from './user.entity';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { UpdateUserDto } from './dto/update-user-dto';
+import { Role } from 'src/enums/role.enum';
 @Injectable()
 export class UserService {
   private readonly JWT_SECRET = process.env.JWT_SECRET;
@@ -79,5 +80,29 @@ export class UserService {
     delete user.password;
 
     return user;
+  }
+
+  async allUsers(): Promise<User[]> {
+    try {
+      const users = await this.userRepo.find({
+        where: {
+          role: Not(Role.Admin),
+        },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          profilePicture: true,
+          products: {
+            id: true,
+          },
+        },
+        relations: {
+          products: true,
+        },
+      });
+      return users;
+    } catch (error) {}
   }
 }

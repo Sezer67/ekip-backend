@@ -1,4 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Request } from 'express';
 import { ChatService } from 'src/chat-room/chat.service';
@@ -7,6 +8,7 @@ import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { Message } from './message.entity';
+import { MessageGateway } from './message.gateway';
 
 @Injectable()
 export class MessageService {
@@ -15,8 +17,10 @@ export class MessageService {
     private readonly messageRepo: Repository<Message>,
     private readonly chatService: ChatService,
     private readonly userService: UserService,
+    private readonly messageGateway: MessageGateway,
   ) {}
 
+  @Cron('* * * * * *')
   async createMessage(
     dto: CreateMessageDto,
     request: Request,
@@ -52,7 +56,8 @@ export class MessageService {
       delete newMessage.senderId.balance;
       delete newMessage.senderId.username;
 
-      return newMessage;
+      await this.messageGateway.sendMessageSocket(newMessage);
+      return await this.messageRepo.save(newMessage);
     } catch (error) {
       console.log(error);
       throw new HttpException(error, 400);
@@ -89,6 +94,7 @@ export class MessageService {
           date: 'ASC',
         },
       });
+
       return roomMessages;
     } catch (error) {}
   }
