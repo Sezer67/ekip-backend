@@ -90,6 +90,7 @@ export class UserService {
         },
         select: {
           id: true,
+          username: true,
           email: true,
           firstName: true,
           lastName: true,
@@ -97,6 +98,8 @@ export class UserService {
           products: {
             id: true,
           },
+          balance: true,
+          role: true,
         },
         relations: {
           products: true,

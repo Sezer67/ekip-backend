@@ -6,7 +6,7 @@ export class MessageGateway {
   @WebSocketServer()
   server: Server;
 
-  async sendMessageSocket(message: Message): Promise<boolean> {
-    return this.server.emit('socket-message', message);
+  async sendMessageSocket(id: string, message: Message): Promise<boolean> {
+    return this.server.emit(id, message);
   }
 }

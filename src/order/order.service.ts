@@ -6,8 +6,11 @@ import { ProductService } from 'src/product/product.service';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { Between, Repository } from 'typeorm';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { SalesResponseType } from './dto/response-order.dto';
+import { CreateOrderDto, SellerSaledDto } from './dto/create-order.dto';
+import {
+  BestSalesResponseType,
+  SalesResponseType,
+} from './dto/response-order.dto';
 import { Order } from './order.entity';
 
 @Injectable()
@@ -156,10 +159,14 @@ export class OrderService {
     return orders;
   }
 
-  async getSellerSaledProducts(request: Request): Promise<SalesResponseType> {
+  async getSellerSaledProducts(
+    request: Request,
+    dto: SellerSaledDto,
+  ): Promise<SalesResponseType> {
     try {
       const user = request.user as User;
-      const date = new Date();
+      const date = new Date(dto.date);
+
       const orders = await this.orderRepo.findAndCount({
         where: {
           ownerId: {
@@ -168,7 +175,7 @@ export class OrderService {
           isAccept: true,
           answerAt: Between(
             new Date(date.getFullYear(), date.getMonth(), 1),
-            new Date(date.getFullYear(), date.getMonth() + 1, 1),
+            new Date(date.getFullYear(), date.getMonth(), 31),
           ),
         },
         order: {
@@ -182,10 +189,10 @@ export class OrderService {
           id: user.id,
         })
         .andWhere('order.answer_at > :startDate', {
-          startDate: new Date(date.getFullYear(), date.getMonth(), 1),
+          startDate: new Date(date.getFullYear(), date.getMonth(), 2),
         })
         .andWhere('order.answer_at < :endDate', {
-          endDate: new Date(date.getFullYear(), date.getMonth() + 1, 1),
+          endDate: new Date(date.getFullYear(), date.getMonth(), 31),
         })
         .getRawOne();
 
@@ -218,23 +225,32 @@ export class OrderService {
 
   async getBestStats(
     request: Request,
-  ): Promise<{ product: Product; count: number }> {
+  ): Promise<{ product: Product; count: number; sum: number }> {
     try {
       // en çok sipariş edilen ürünüm
-      const { count, ...product } = await this.orderRepo
+      const orders = await this.orderRepo
         .createQueryBuilder('order')
-        .select(['order.product_id', 'product.*'])
-        .addSelect('COUNT(order.product_id)')
+        .select([
+          'order.product_id',
+          'product.*',
+          'user.id',
+          'user.firstName',
+          'user.lastName',
+        ])
+        .addSelect(['COUNT(order.product_id)', 'SUM(order.piece)'])
         .leftJoin(Product, 'product', 'order.product_id = product.id')
+        .leftJoin(User, 'user', 'order.owner_id = user.id')
         .where('order.owner_id = :id and order.is_accept = TRUE', {
           id: (request.user as User).id,
         })
         .groupBy('order.product_id')
         .addGroupBy('product.id')
-        .orderBy('order.product_id')
+        .addGroupBy('user.id')
+        .orderBy('SUM(order.piece)', 'DESC')
+        .limit(1)
         .getRawOne();
 
-      return { product, count };
+      return orders;
     } catch (error) {
       console.log(error);
     }
@@ -295,5 +311,34 @@ export class OrderService {
       await this.orderRepo.delete({ id });
       return id;
     } catch (error) {}
+  }
+
+  async getBestSalesProducts(): Promise<BestSalesResponseType[]> {
+    try {
+      const orders = await this.orderRepo
+        .createQueryBuilder('order')
+        .select([
+          'order.product_id',
+          'product.*',
+          'user.id',
+          'user.firstName',
+          'user.lastName',
+          'SUM(order.piece)',
+        ])
+        .addSelect('COUNT(order.product_id)')
+        .leftJoin(Product, 'product', 'order.product_id = product.id')
+        .leftJoin(User, 'user', 'order.owner_id = user.id')
+        .where('order.is_accept = TRUE and product.stock > 0')
+        .groupBy('order.product_id')
+        .addGroupBy('product.id')
+        .addGroupBy('user.id')
+        .orderBy('SUM(order.piece)', 'DESC')
+        .limit(50)
+        .getRawMany();
+
+      return orders;
+    } catch (error) {
+      throw error;
+    }
   }
 }

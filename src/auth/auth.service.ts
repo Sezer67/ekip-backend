@@ -80,7 +80,7 @@ export class AuthService {
     const payload: UserAuthPayload = { id: user.id };
     const token = await this.jwtService.signAsync(
       { username: user.username, id: payload.id, role: user.role },
-      { subject: user.id, expiresIn: '1h', secret: this.JWT_SECRET },
+      { subject: user.id, expiresIn: '24h', secret: this.JWT_SECRET },
     );
     response.cookie('token', token, { httpOnly: true });
     delete user.password;
@@ -91,7 +91,6 @@ export class AuthService {
     try {
       // console.log('istek geldi', request);
       const { user } = request;
-      console.log('geldi', (request.user as any).id);
       const token = request.cookies['token'];
       // const data = await this.jwtService.verifyAsync(token, {
       //   secret: this.JWT_SECRET,

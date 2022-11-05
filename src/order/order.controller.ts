@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -15,7 +16,7 @@ import { Request } from 'express';
 import { RolesGuard } from 'src/auth/guards/role.guard';
 import { Roles } from 'src/decorators/role.decorator';
 import { Role } from 'src/enums/role.enum';
-import { CreateOrderDto } from './dto/create-order.dto';
+import { CreateOrderDto, SellerSaledDto } from './dto/create-order.dto';
 import { Order } from './order.entity';
 import { OrderService } from './order.service';
 
@@ -46,8 +47,11 @@ export class OrderController {
   @UseGuards(RolesGuard)
   @Roles(Role.Seller)
   @Get('@me/sales')
-  getSellerSaledProducts(@Req() request: Request) {
-    return this.orderService.getSellerSaledProducts(request);
+  getSellerSaledProducts(
+    @Query() dto: SellerSaledDto,
+    @Req() request: Request,
+  ) {
+    return this.orderService.getSellerSaledProducts(request, dto);
   }
 
   @UseGuards(RolesGuard)
@@ -79,5 +83,12 @@ export class OrderController {
   @Delete(':id')
   deleteOrder(@Param('id') id: string) {
     return this.orderService.deleteById(id);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles(Role.Customer, Role.Seller)
+  @Get('/best-sales')
+  getBestSalesProducts() {
+    return this.orderService.getBestSalesProducts();
   }
 }

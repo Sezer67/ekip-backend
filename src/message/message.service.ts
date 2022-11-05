@@ -56,7 +56,10 @@ export class MessageService {
       delete newMessage.senderId.balance;
       delete newMessage.senderId.username;
 
-      await this.messageGateway.sendMessageSocket(newMessage);
+      await this.messageGateway.sendMessageSocket(
+        newMessage.receiverId.id,
+        newMessage,
+      );
       return await this.messageRepo.save(newMessage);
     } catch (error) {
       console.log(error);
