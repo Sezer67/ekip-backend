@@ -4,12 +4,10 @@ import {
   IsEmail,
   IsOptional,
   MinLength,
-  IsEnum,
   IsNumber,
   Min,
-  Max,
+  IsBoolean,
 } from 'class-validator';
-import { Role } from 'src/enums/role.enum';
 
 export class UpdateUserDto {
   @IsOptional()
@@ -32,10 +30,6 @@ export class UpdateUserDto {
   profilePicture?: string;
 
   @IsOptional()
-  @IsEnum([Role.Customer, Role.Seller])
-  role?: Role;
-
-  @IsOptional()
   @IsString()
   @MinLength(6)
   password?: string;
@@ -44,4 +38,8 @@ export class UpdateUserDto {
   @IsNumber()
   @Min(1)
   balance?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  isFreeze?: boolean;
 }

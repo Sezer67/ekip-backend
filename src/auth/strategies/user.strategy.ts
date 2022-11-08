@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { isDefined } from 'class-validator';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -23,6 +28,9 @@ export class UserStrategy extends PassportStrategy(Strategy, 'user-jwt') {
     if (!isDefined(user)) {
       throw new UnauthorizedException();
     }
+    // if (user.isFreeze) {
+    //   throw new ForbiddenException('Hesabınız Dondurulmuştur.');
+    // }
     delete user.password;
     return user;
   }

@@ -341,4 +341,65 @@ export class OrderService {
       throw error;
     }
   }
+
+  async getAllSalesByDay(dto: {
+    startDate: Date;
+    endDate: Date;
+  }): Promise<Order[]> {
+    try {
+      const startDate = new Date(dto.startDate);
+      const endDate = new Date(dto.endDate);
+
+      const orders = await this.orderRepo.find({
+        where: {
+          isAccept: true,
+          answerAt: Between(
+            new Date(
+              startDate.getFullYear(),
+              startDate.getMonth(),
+              startDate.getDate(),
+              0,
+              0,
+              0,
+              0,
+            ),
+            new Date(
+              endDate.getFullYear(),
+              endDate.getMonth(),
+              endDate.getDate(),
+              23,
+              59,
+              59,
+              999,
+            ),
+          ),
+        },
+        order: {
+          answerAt: 'DESC',
+        },
+        relations: {
+          customerId: true,
+          productId: true,
+          ownerId: true,
+        },
+        select: {
+          customerId: {
+            id: true,
+            username: true,
+          },
+          ownerId: {
+            id: true,
+            username: true,
+          },
+          productId: {
+            id: true,
+            name: true,
+          },
+        },
+      });
+      return orders;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

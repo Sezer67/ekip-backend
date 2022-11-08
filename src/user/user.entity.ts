@@ -26,6 +26,9 @@ export class User {
   @Column({ type: 'enum', enum: Role, default: Role.Customer })
   role: Role;
 
+  @Column({ type: 'boolean', default: 'false', name: 'is_freeze' })
+  isFreeze: boolean;
+
   @Column()
   password: string;
 

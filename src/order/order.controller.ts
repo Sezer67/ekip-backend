@@ -91,4 +91,12 @@ export class OrderController {
   getBestSalesProducts() {
     return this.orderService.getBestSalesProducts();
   }
+
+  @UseGuards(RolesGuard)
+  @Roles(Role.Admin)
+  @Post('/all-sales')
+  getAllSalesByDate(@Body() dto: { startDate: Date; endDate: Date }) {
+    console.log('controller ', dto);
+    return this.orderService.getAllSalesByDay(dto);
+  }
 }

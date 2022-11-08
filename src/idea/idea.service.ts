@@ -63,7 +63,28 @@ export class IdeaService {
       throw error;
     }
   }
-
+  async getIdeaById(id: string): Promise<Idea> {
+    try {
+      const idea = await this.ideaRepo.findOne({
+        where: {
+          id,
+        },
+        relations: {
+          userId: true,
+        },
+        select: {
+          userId: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+      });
+      return idea;
+    } catch (error) {
+      throw error;
+    }
+  }
   async asnwerIdeaById(id: string, dto: UpdateIdeaDto): Promise<Idea> {
     try {
       const idea = await this.ideaRepo.findOne({

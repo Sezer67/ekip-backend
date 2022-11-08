@@ -33,11 +33,15 @@ export class IdeaController {
   getMyIdeas(@Req() request: Request) {
     return this.ideaService.getMyIdeas(request);
   }
-
   @Get('all')
   @Roles(Role.Admin)
   getAllIdeas() {
     return this.ideaService.getAllIdeas();
+  }
+  @Get(':id')
+  @Roles(Role.Admin)
+  getIdeaById(@Param('id') id: string) {
+    return this.ideaService.getIdeaById(id);
   }
 
   @Put(':id')

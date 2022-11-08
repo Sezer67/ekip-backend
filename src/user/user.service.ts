@@ -100,6 +100,7 @@ export class UserService {
           },
           balance: true,
           role: true,
+          isFreeze: true,
         },
         relations: {
           products: true,
