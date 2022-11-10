@@ -42,6 +42,15 @@ export class Product extends BaseEntity {
   @Column({ type: 'int', name: 'show_count', default: 0 })
   showCount: number;
 
+  @Column({ nullable: true })
+  description: string;
+
+  @Column({ type: 'int', name: 'rating_count', default: 0 })
+  ratingCount: number;
+
+  @Column({ name: 'rating_point', default: 0 })
+  ratingPoint: number;
+
   // @OneToMany(() => CategoryEntity, (category) => category.id, {
   //   onDelete: 'CASCADE',
   // })

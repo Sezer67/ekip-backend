@@ -27,4 +27,8 @@ export class ProductCreateDto {
   @IsNotEmpty()
   @IsArray()
   categories: string[];
+
+  @IsNotEmpty()
+  @IsString()
+  description: string;
 }
