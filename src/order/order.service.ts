@@ -63,6 +63,16 @@ export class OrderService {
       const product = await this.productService.getProductById(dto.productId);
       delete product.images;
       delete (request.user as User).profilePicture;
+      console.log('------------------------');
+      console.log(
+        'product price ',
+        product.price,
+        '\npiece :',
+        dto.piece,
+        '\nuser balance : ',
+        (request.user as User).balance,
+      );
+      console.log('------------------------');
       if ((request.user as User).balance < dto.piece * product.price) {
         console.log('girdi');
         throw new HttpException(
@@ -73,7 +83,7 @@ export class OrderService {
           HttpStatus.BAD_REQUEST,
         );
       }
-
+      console.log('if den sonra');
       const data = {
         piece: dto.piece,
         totalPrice: dto.piece * product.price,
@@ -82,15 +92,21 @@ export class OrderService {
         customerId: request.user as User,
         ownerId: product.ownerId,
       };
+      console.log('product update öncesi');
       await this.productService.updateProductById(dto.productId, {
         stock: product.stock - dto.piece,
       });
+      console.log('user update öncesi');
       await this.userService.update((request.user as User).id, {
         balance: dto.piece * product.price * -1,
       });
+      console.log('order update öncesi');
       const order = await this.orderRepo.save(data);
+      console.log('return öncesi');
       return order;
-    } catch (error) {}
+    } catch (error) {
+      throw error;
+    }
   }
 
   async get(request: Request): Promise<Order[]> {
@@ -202,7 +218,9 @@ export class OrderService {
         filterTotalTaking: totalMonth.filterTotalTaking,
       };
       return result;
-    } catch (error) {}
+    } catch (error) {
+      throw error;
+    }
   }
 
   async getSellerSaledProductsYear(request: Request): Promise<Order[]> {
@@ -265,6 +283,9 @@ export class OrderService {
       await this.orderRepo.save(order);
       if (dto.isAccept) {
         // satıcıya parası aktarılacak
+        await this.productService.updateProductById(order.productId.id, {
+          customerId: order.customerId,
+        });
         await this.userService.update(order.ownerId.id, {
           balance: order.piece * order.productId.price,
         });

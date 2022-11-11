@@ -76,4 +76,20 @@ export class ProductController {
     }
     return this.productService.updateProductById(id, dto);
   }
+
+  @Roles(Role.Customer)
+  @Put('rate/:id')
+  evaluateProductById(
+    @Param('id') id: string,
+    @Req() request: Request,
+    @Body() dto: { rating: number },
+  ) {
+    return this.productService.evaluateProduct(id, dto, request);
+  }
+
+  @Roles(Role.Customer)
+  @Get('rate/isRating')
+  getIsRating(@Req() request: Request) {
+    return this.productService.getIsRating(request);
+  }
 }

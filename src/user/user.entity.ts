@@ -1,7 +1,13 @@
 import { Role } from 'src/enums/role.enum';
 import { Product } from 'src/product/product.entity';
 import { Sales } from 'src/sales/sales.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('users')
 export class User {

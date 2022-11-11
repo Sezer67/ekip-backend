@@ -8,6 +8,8 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -48,7 +50,7 @@ export class Product extends BaseEntity {
   @Column({ type: 'int', name: 'rating_count', default: 0 })
   ratingCount: number;
 
-  @Column({ name: 'rating_point', default: 0 })
+  @Column({ name: 'rating_point', default: 0, type: 'double precision' })
   ratingPoint: number;
 
   // @OneToMany(() => CategoryEntity, (category) => category.id, {
@@ -56,6 +58,11 @@ export class Product extends BaseEntity {
   // })
   // @JoinColumn({ name: 'categoryIds' })
   // categories: CategoryEntity[];
+
+  // ürünü satın alan müşteriler
+  @ManyToMany(() => User)
+  @JoinTable({ name: 'customerproducts' })
+  customerIds: User[];
 
   @ManyToOne(() => User, (user) => user.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'owner_id' })

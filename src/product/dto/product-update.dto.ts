@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+import { User } from 'src/user/user.entity';
 
 export class ProductUpdateDto {
   @IsOptional()
@@ -31,4 +32,8 @@ export class ProductUpdateDto {
   @IsNotEmpty()
   @IsArray()
   categories?: string[];
+
+  @IsOptional()
+  @IsNotEmpty()
+  customerId?: User;
 }

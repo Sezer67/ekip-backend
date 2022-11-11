@@ -14,6 +14,7 @@ import { FollowModule } from './follow/follow.module';
 import { ChatModule } from './chat-room/chat.module';
 import { MessageModule } from './message/message.module';
 import { IdeaModule } from './idea/idea.module';
+import { RatingModule } from './rating/rating.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -39,6 +40,7 @@ import { IdeaModule } from './idea/idea.module';
     ChatModule,
     MessageModule,
     IdeaModule,
+    RatingModule,
   ],
   controllers: [],
   providers: [],

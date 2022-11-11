@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Request } from 'express';
 import { CategoryEntity } from 'src/category/category.entity';
+import { RatingService } from 'src/rating/rating.service';
 import { User } from 'src/user/user.entity';
 import {
   Any,
@@ -26,6 +27,7 @@ export class ProductService {
     private readonly productRepo: Repository<Product>,
     @InjectRepository(CategoryEntity)
     private readonly categoryRepo: Repository<CategoryEntity>,
+    private readonly ratingService: RatingService,
   ) {}
 
   createResponse(msg: string, description: string, status: number) {
@@ -215,37 +217,94 @@ export class ProductService {
   }
 
   async getProductById(id: string): Promise<Product> {
-    const product = await this.productRepo.findOne({
-      where: { id },
-      relations: {
-        ownerId: true,
-      },
-      select: {
-        ownerId: {
-          id: true,
-          firstName: true,
-          lastName: true,
+    try {
+      const product = await this.productRepo.findOne({
+        where: { id },
+        relations: {
+          ownerId: true,
         },
-      },
-    });
-    return product;
+        select: {
+          ownerId: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+      });
+      return product;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async updateProductById(id: string, dto: ProductUpdateDto): Promise<Product> {
     try {
       const product = await this.productRepo.findOne({
         where: { id },
+        relations: { customerIds: true },
+        select: {
+          customerIds: { id: true },
+        },
       });
+      if (!product) {
+        this.createResponse('error', 'Ürün Bulunamadı', HttpStatus.BAD_REQUEST);
+      }
       if (dto.showCount) {
         dto.showCount = product.showCount + 1;
       }
+      if (dto.customerId) {
+        const control = product.customerIds.find(
+          (customer) => customer.id === dto.customerId.id,
+        );
+        if (!control) {
+          product.customerIds.push(dto.customerId);
+          // buraya pushlarken rating e de kayıt edecek
+          this.ratingService.create({
+            productId: product,
+            userId: dto.customerId,
+          });
+        }
+      }
       Object.keys(dto).forEach((key) => {
+        if (key === 'customerId') return;
         product[key] = dto[key];
       });
       this.productRepo.save(product);
       return product;
     } catch (error) {
-      this.createResponse('error', 'Ürün Bulunamadı', HttpStatus.BAD_REQUEST);
+      throw error;
+    }
+  }
+
+  async evaluateProduct(
+    id: string,
+    dto: { rating: number },
+    request: Request,
+  ): Promise<number> {
+    try {
+      const product = await this.getProductById(id);
+      product.ratingCount += 1;
+      product.ratingPoint =
+        (dto.rating + product.ratingPoint) / product.ratingCount;
+      await this.productRepo.save(product);
+      await this.ratingService.evaluate({
+        productId: id,
+        userId: (request.user as User).id,
+      });
+      return product.ratingPoint;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getIsRating(request: Request) {
+    try {
+      const isRatings = await this.ratingService.getUserById(
+        (request.user as User).id,
+      );
+      return isRatings;
+    } catch (error) {
+      throw error;
     }
   }
 }
