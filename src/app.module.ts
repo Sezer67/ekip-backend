@@ -15,6 +15,7 @@ import { ChatModule } from './chat-room/chat.module';
 import { MessageModule } from './message/message.module';
 import { IdeaModule } from './idea/idea.module';
 import { RatingModule } from './rating/rating.module';
+import { CommentModule } from './comment/comment.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -41,6 +42,7 @@ import { RatingModule } from './rating/rating.module';
     MessageModule,
     IdeaModule,
     RatingModule,
+    CommentModule,
   ],
   controllers: [],
   providers: [],

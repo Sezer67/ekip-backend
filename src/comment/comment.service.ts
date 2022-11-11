@@ -13,7 +13,10 @@ export class CommentService {
     private readonly commentRepo: Repository<Comment>,
   ) {}
 
-  async createComment(dto: CreateCommentDto, request: Request) {
+  async createComment(
+    dto: CreateCommentDto,
+    request: Request,
+  ): Promise<Comment> {
     try {
       const { comment, productId, ref } = dto;
       const newComment = this.commentRepo.create({
@@ -25,6 +28,33 @@ export class CommentService {
       });
 
       return await this.commentRepo.save(newComment);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getCommentByProductId(id: string): Promise<Comment[]> {
+    try {
+      const comments = await this.commentRepo.find({
+        where: {
+          productId: id,
+        },
+        relations: {
+          userId: true,
+        },
+        select: {
+          userId: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            profilePicture: true,
+          },
+        },
+        order: {
+          createdAt: 'ASC',
+        },
+      });
+      return comments;
     } catch (error) {
       throw error;
     }
