@@ -309,24 +309,31 @@ export class OrderService {
     try {
       // eğer sipariş onaylanmışsa ürün stoğunda bi değişiklik olmuyacak
       // eğer onaylanmamışsa (onu reddet butonunda seller tarafında yapılacak)
-      // henüz bekliyor durumunda ise ürününstoğu artırılacak
+      // henüz bekliyor durumunda ise ürününstoğu artırılacak ve para iade edilecek
       const order = await this.orderRepo.findOne({
         where: {
           id,
         },
         relations: {
           productId: true,
+          customerId:true,
         },
         select: {
           productId: {
             id: true,
             stock: true,
           },
+          customerId:{
+            id:true
+          }
         },
       });
       if (!order.isAnswer) {
         await this.productService.updateProductById(order.productId.id, {
           stock: order.productId.stock + order.piece,
+        });
+        await this.userService.update(order.customerId.id,{
+          balance:order.totalPrice
         });
       }
       await this.orderRepo.delete({ id });

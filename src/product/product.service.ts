@@ -85,6 +85,13 @@ export class ProductService {
         relations: {
           ownerId: true,
         },
+        select:{
+          ownerId:{
+            id:true,
+            firstName:true,
+            lastName:true
+          }
+        },
         order: {
           showCount: 'DESC',
         },
@@ -108,6 +115,14 @@ export class ProductService {
         },
         relations: {
           ownerId: true,
+        },
+        
+        select:{
+          ownerId:{
+            id:true,
+            firstName:true,
+            lastName:true
+          }
         },
         order: {
           createdAt: 'DESC',

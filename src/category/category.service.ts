@@ -25,9 +25,10 @@ export class CategoryService {
 
   async addCategory(dto: CategoryCreateDto): Promise<CategoryEntity> {
     try {
+      const name = dto.name.charAt(0).toUpperCase() + dto.name.slice(1);
       const control = await this.categoryRepo.findOne({
         where: {
-          name: dto.name,
+          name
         },
       });
 
@@ -38,7 +39,9 @@ export class CategoryService {
           HttpStatus.BAD_REQUEST,
         );
       }
-      const category = await this.categoryRepo.save(dto);
+      const category = await this.categoryRepo.save({
+        name
+      });
       return category;
     } catch (error) {
       this.createResponse('error', error, HttpStatus.BAD_REQUEST);
