@@ -28,9 +28,9 @@ export class UserStrategy extends PassportStrategy(Strategy, 'user-jwt') {
     if (!isDefined(user)) {
       throw new UnauthorizedException();
     }
-    // if (user.isFreeze) {
-    //   throw new ForbiddenException('Hesabınız Dondurulmuştur.');
-    // }
+    if (user.isFreeze) {
+      throw new ForbiddenException('Hesabınız Dondurulmuştur.');
+    }
     delete user.password;
     return user;
   }

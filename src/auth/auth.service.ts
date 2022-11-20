@@ -77,6 +77,9 @@ export class AuthService {
         'Yanlış Şifre Girdiniz',
         HttpStatus.BAD_REQUEST,
       );
+    if(user.isFreeze){
+      this.createResponse('error','Hesabınız Boldurulmuştur.',HttpStatus.FORBIDDEN);
+    }
     const payload: UserAuthPayload = { id: user.id };
     const token = await this.jwtService.signAsync(
       { username: user.username, id: payload.id, role: user.role },
