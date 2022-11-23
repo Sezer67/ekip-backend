@@ -10,9 +10,6 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { UserAuthPayload } from '../user.payload';
-
-// bi payload interface oluşturulacak ve login işleminde atanacak o validate de buraya gelecek
-
 @Injectable()
 export class UserStrategy extends PassportStrategy(Strategy, 'user-jwt') {
   constructor(private readonly userService: UserService) {

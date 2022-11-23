@@ -24,7 +24,6 @@ export class CommentController {
 
   @Get(':id')
   getCommentsByProductId(@Param('id') id: string) {
-    console.log('istek geliyor');
     return this.commentService.getCommentByProductId(id);
   }
 }

@@ -77,8 +77,12 @@ export class AuthService {
         'Yanlış Şifre Girdiniz',
         HttpStatus.BAD_REQUEST,
       );
-    if(user.isFreeze){
-      this.createResponse('error','Hesabınız Boldurulmuştur.',HttpStatus.FORBIDDEN);
+    if (user.isFreeze) {
+      this.createResponse(
+        'error',
+        'Hesabınız Boldurulmuştur.',
+        HttpStatus.FORBIDDEN,
+      );
     }
     const payload: UserAuthPayload = { id: user.id };
     const token = await this.jwtService.signAsync(
@@ -92,13 +96,7 @@ export class AuthService {
 
   async getCurrentUser(request: Request): Promise<ResponseLoginUserDto> {
     try {
-      // console.log('istek geldi', request);
       const { user } = request;
-      const token = request.cookies['token'];
-      // const data = await this.jwtService.verifyAsync(token, {
-      //   secret: this.JWT_SECRET,
-      // });
-      // const user = await this.getUserById(data['sub']);
       delete (user as User).password;
       return { ...(user as User) };
     } catch (error) {

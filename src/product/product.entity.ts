@@ -1,18 +1,13 @@
-import { CategoryEntity } from 'src/category/category.entity';
-import { Favorite } from 'src/favorite/favorite.entity';
-import { Sales } from 'src/sales/sales.entity';
 import { User } from 'src/user/user.entity';
 import {
   BaseEntity,
   Column,
-  CreateDateColumn,
   Entity,
   JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -67,7 +62,4 @@ export class Product extends BaseEntity {
   @ManyToOne(() => User, (user) => user.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'owner_id' })
   ownerId: User;
-
-  @OneToMany(() => Sales, (sales) => sales.productId, { onDelete: 'CASCADE' })
-  solds: Sales[];
 }

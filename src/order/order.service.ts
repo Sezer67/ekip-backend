@@ -63,18 +63,8 @@ export class OrderService {
       const product = await this.productService.getProductById(dto.productId);
       delete product.images;
       delete (request.user as User).profilePicture;
-      console.log('------------------------');
-      console.log(
-        'product price ',
-        product.price,
-        '\npiece :',
-        dto.piece,
-        '\nuser balance : ',
-        (request.user as User).balance,
-      );
-      console.log('------------------------');
+
       if ((request.user as User).balance < dto.piece * product.price) {
-        console.log('girdi');
         throw new HttpException(
           {
             message: 'error',
@@ -83,7 +73,6 @@ export class OrderService {
           HttpStatus.BAD_REQUEST,
         );
       }
-      console.log('if den sonra');
       const data = {
         piece: dto.piece,
         totalPrice: dto.piece * product.price,
@@ -92,17 +81,13 @@ export class OrderService {
         customerId: request.user as User,
         ownerId: product.ownerId,
       };
-      console.log('product update öncesi');
       await this.productService.updateProductById(dto.productId, {
         stock: product.stock - dto.piece,
       });
-      console.log('user update öncesi');
       await this.userService.update((request.user as User).id, {
         balance: dto.piece * product.price * -1,
       });
-      console.log('order update öncesi');
       const order = await this.orderRepo.save(data);
-      console.log('return öncesi');
       return order;
     } catch (error) {
       throw error;
@@ -316,24 +301,24 @@ export class OrderService {
         },
         relations: {
           productId: true,
-          customerId:true,
+          customerId: true,
         },
         select: {
           productId: {
             id: true,
             stock: true,
           },
-          customerId:{
-            id:true
-          }
+          customerId: {
+            id: true,
+          },
         },
       });
       if (!order.isAnswer) {
         await this.productService.updateProductById(order.productId.id, {
           stock: order.productId.stock + order.piece,
         });
-        await this.userService.update(order.customerId.id,{
-          balance:order.totalPrice
+        await this.userService.update(order.customerId.id, {
+          balance: order.totalPrice,
         });
       }
       await this.orderRepo.delete({ id });

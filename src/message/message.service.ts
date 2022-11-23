@@ -26,7 +26,6 @@ export class MessageService {
     request: Request,
   ): Promise<Message> {
     try {
-      console.log(dto);
       const chatRoom = await this.chatService.getRoomById(dto.chatRoomId);
 
       if (!chatRoom) {
@@ -62,7 +61,6 @@ export class MessageService {
       );
       return await this.messageRepo.save(newMessage);
     } catch (error) {
-      console.log(error);
       throw new HttpException(error, 400);
     }
   }

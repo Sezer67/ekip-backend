@@ -85,12 +85,12 @@ export class ProductService {
         relations: {
           ownerId: true,
         },
-        select:{
-          ownerId:{
-            id:true,
-            firstName:true,
-            lastName:true
-          }
+        select: {
+          ownerId: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
         },
         order: {
           showCount: 'DESC',
@@ -116,13 +116,13 @@ export class ProductService {
         relations: {
           ownerId: true,
         },
-        
-        select:{
-          ownerId:{
-            id:true,
-            firstName:true,
-            lastName:true
-          }
+
+        select: {
+          ownerId: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
         },
         order: {
           createdAt: 'DESC',
@@ -136,7 +136,6 @@ export class ProductService {
   }
 
   async getProduct(query: ProductQueryDto): Promise<Product[]> {
-    console.log('query : ', query);
     try {
       const queryReq: any = {};
       {
@@ -181,8 +180,6 @@ export class ProductService {
         queryReq.where = where;
         queryReq.order = order;
       }
-
-      console.log('GELEN QUERY : ', queryReq);
 
       const products = await this.productRepo.find(queryReq);
 

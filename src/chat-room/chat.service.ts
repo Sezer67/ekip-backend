@@ -62,7 +62,7 @@ export class ChatService {
       delete room.sellerId.profilePicture;
       return await this.chatRepo.save(room);
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 
@@ -105,7 +105,7 @@ export class ChatService {
 
       return userRooms;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 

@@ -7,7 +7,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
-import { SalesModule } from './sales/sales.module';
 import { OrderModule } from './order/order.module';
 import { FavoriteModule } from './favorite/favorite.module';
 import { FollowModule } from './follow/follow.module';
@@ -34,7 +33,6 @@ import { CommentModule } from './comment/comment.module';
     AuthModule,
     ProductModule,
     CategoryModule,
-    SalesModule,
     OrderModule,
     FavoriteModule,
     FollowModule,
